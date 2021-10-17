@@ -1,0 +1,16 @@
+{
+  "name": "reddit-music",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "copy-config": "cp credentials.sample.json credentials.json"
+  },
+  "author": "me@statox.fr",
+  "license": "MIT",
+  "dependencies": {
+    "google-auth-library": "^7.10.1",
+    "googleapis": "^88.2.0",
+    "snoowrap": "^1.23.0"
+  }
+}
