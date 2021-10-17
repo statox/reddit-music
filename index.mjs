@@ -1,9 +1,10 @@
 import * as async from 'async';
 import {getHotYoutubeLinks} from './reddit.js';
-import {getChannel, initClient, getPlaylistItems, addPlaylistItems} from './youtube.js';
+import {getChannel, initClient, getPlaylistItems, addPlaylistItems, checkItemInPlaylist} from './youtube.js';
 
-const playlistId = 'PLlp3zoFuZjAMsFzOTwlEZyptJdvLkT12v'; // reggae
-// const playlistId = 'PLlp3zoFuZjANSoZwrRzV7Wrw59EhZx_Ho'; // test
+const playlistId = 'PLlp3zoFuZjAMuAN1o8kBC6M9x4FvHLtyw'; // reggae
+// const playlistId = 'PLlp3zoFuZjAOkEySCnU6UHxSKpZSdhLC_'; // test
+
 async.auto(
     {
         initYoutube: (cb) => initClient(cb),

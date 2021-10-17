@@ -163,26 +163,52 @@ function addPlaylistItems(params, cb) {
     if (!client) {
         return cb(new Error('addPlaylistItems() was called but client is not initialized'));
     }
+    checkItemInPlaylist(params, (error, itemIsInPlaylist) => {
+        if (itemIsInPlaylist) {
+            return cb();
+        }
+        var service = google.youtube('v3');
+        service.playlistItems.insert(
+            {
+                auth: client,
+                part: 'snippet',
+                requestBody: {
+                    snippet: {
+                        playlistId: params.playlistId,
+                        resourceId: {
+                            kind: params.kind,
+                            videoId: params.videoId
+                        }
+                    }
+                }
+            },
+            function (error, response) {
+                if (error) {
+                    return cb(error);
+                }
+                return cb(null, response);
+            }
+        );
+    });
+}
+
+function checkItemInPlaylist(params, cb) {
+    if (!client) {
+        return cb(new Error('checkItemInPlaylist() was called but client is not initialized'));
+    }
     var service = google.youtube('v3');
-    service.playlistItems.insert(
+    service.playlistItems.list(
         {
             auth: client,
             part: 'snippet',
-            requestBody: {
-                snippet: {
-                    playlistId: params.playlistId,
-                    resourceId: {
-                        kind: params.kind,
-                        videoId: params.videoId
-                    }
-                }
-            }
+            playlistId: params.playlistId,
+            videoId: params.videoId
         },
         function (error, response) {
             if (error) {
                 return cb(error);
             }
-            return cb(null, response);
+            return cb(null, response.data.items.length > 0);
         }
     );
 }
@@ -191,3 +217,4 @@ exports.getChannel = getChannel;
 exports.initClient = initClient;
 exports.getPlaylistItems = getPlaylistItems;
 exports.addPlaylistItems = addPlaylistItems;
+exports.checkItemInPlaylist = checkItemInPlaylist;
