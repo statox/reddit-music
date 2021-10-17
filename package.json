@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "copy-config": "cp credentials.sample.json credentials.json"
+    "copy-config": "cp credentials.sample.json credentials.json; cp credentials.youtube.sample.json credentials.youtube.json"
   },
   "author": "me@statox.fr",
   "license": "MIT",
   "dependencies": {
+    "async": "^3.2.1",
     "google-auth-library": "^7.10.1",
     "googleapis": "^88.2.0",
     "snoowrap": "^1.23.0"
