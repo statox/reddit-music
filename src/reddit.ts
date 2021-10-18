@@ -11,7 +11,7 @@ const handleSubmissions = (posts) => {
     });
 };
 
-exports.getHotYoutubeLinks = (cb) => {
+export const getHotYoutubeLinks = (cb) => {
     r.getSubreddit('reggae')
         .getHot()
         .then((result) => {

@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "copy-config": "cp credentials.sample.json credentials.json; cp credentials.youtube.sample.json credentials.youtube.json"
+    "build": "npm run build:clean && npm run build:static && npm run build:ts",
+    "build:clean": "mkdir -p build && rm -rf build/*",
+    "build:static": "for f in $(find src -type f -not -name \"*.ts\" -not -name \"*.js\"); do mkdir -p `dirname $f | sed 's/src/build/'` && cp -f $f `echo $f | sed 's/src/build/'`; done;",
+    "build:ts": "node ./node_modules/.bin/tsc",
+    "copy-config": "cp credentials.sample.json credentials.json; cp credentials.youtube.sample.json credentials.youtube.json",
+    "start": "node build/index.js"
   },
   "author": "me@statox.fr",
   "license": "MIT",
@@ -12,6 +17,8 @@
     "async": "^3.2.1",
     "google-auth-library": "^7.10.1",
     "googleapis": "^88.2.0",
-    "snoowrap": "^1.23.0"
+    "snoowrap": "^1.23.0",
+    "tsc": "^2.0.3",
+    "typescript": "^4.4.4"
   }
 }

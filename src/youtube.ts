@@ -18,7 +18,7 @@ var TOKEN_PATH = TOKEN_DIR + 'youtube-credentials.json';
 const credentials = require('./credentials.youtube.json');
 let client;
 
-function initClient(cb) {
+export function initClient(cb) {
     console.log('start initClient');
     authorize(credentials, (newClient) => {
         client = newClient;
@@ -107,7 +107,7 @@ function storeToken(token) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function getChannel(channelName, cb) {
+export function getChannel(channelName, cb) {
     if (!client) {
         return cb(new Error('getChannel() was called but client is not initialized'));
     }
@@ -139,7 +139,7 @@ function getChannel(channelName, cb) {
     );
 }
 
-function getPlaylistItems(playlistId, cb) {
+export function getPlaylistItems(playlistId, cb) {
     if (!client) {
         return cb(new Error('getPlaylistItems() was called but client is not initialized'));
     }
@@ -159,7 +159,7 @@ function getPlaylistItems(playlistId, cb) {
     );
 }
 
-function addPlaylistItems(params, cb) {
+export function addPlaylistItems(params, cb) {
     if (!client) {
         return cb(new Error('addPlaylistItems() was called but client is not initialized'));
     }
@@ -192,7 +192,7 @@ function addPlaylistItems(params, cb) {
     });
 }
 
-function checkItemInPlaylist(params, cb) {
+export function checkItemInPlaylist(params, cb) {
     if (!client) {
         return cb(new Error('checkItemInPlaylist() was called but client is not initialized'));
     }
@@ -212,9 +212,3 @@ function checkItemInPlaylist(params, cb) {
         }
     );
 }
-
-exports.getChannel = getChannel;
-exports.initClient = initClient;
-exports.getPlaylistItems = getPlaylistItems;
-exports.addPlaylistItems = addPlaylistItems;
-exports.checkItemInPlaylist = checkItemInPlaylist;
