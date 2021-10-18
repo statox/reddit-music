@@ -7,9 +7,11 @@ This is a tool which gets the youtube links in a specific subreddit and adds the
 The app is a work in progress, here are the next steps
 
 - [ ] Clean up the code after the POC
-  - [ ] Create proper modules keeping what is currently exposed
-  - [ ] Use typescript
+  - [X] Create proper modules keeping what is currently exposed
+  - [X] Use typescript
   - [ ] Rework the module to expose better API
+  - [ ] Use strong typing where it's possible
+  - [ ] Rework the main function to return stats on what was added
 - [ ] Deployment
   - [ ] Define where to run the app (Github action, self hosted, parcel, something else?)
   - [ ] Rework youtube OAuth2 to be run from a server
@@ -19,4 +21,5 @@ The app is a work in progress, here are the next steps
   - [ ] Create a UI to handle that
 - [ ] Add the ability to create playlists from the configuration
 - [ ] Add the ability to handle more than 5000 videos (seems to be the current limit of videos in a playlist)
+- [ ] Add Slack hooks capabilities to report additions and errors
 - [ ] Handle Spotify playlists
