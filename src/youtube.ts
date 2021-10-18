@@ -6,7 +6,7 @@
 
 var fs = require('fs');
 var readline = require('readline');
-var {google} = require('googleapis');
+import {google} from 'googleapis';
 var OAuth2 = google.auth.OAuth2;
 
 // If modifying these scopes, delete your previously saved credentials
@@ -115,7 +115,7 @@ export function getChannel(channelName, cb) {
     service.channels.list(
         {
             auth: client,
-            part: 'snippet,contentDetails,statistics',
+            part: ['snippet', 'contentDetails', 'statistics'],
             forUsername: channelName
         },
         function (err, response) {
@@ -147,7 +147,7 @@ export function getPlaylistItems(playlistId, cb) {
     service.playlistItems.list(
         {
             auth: client,
-            part: 'snippet,contentDetails,id,status',
+            part: ['snippet', 'contentDetails', 'id', 'status'],
             playlistId
         },
         function (error, response) {
@@ -171,7 +171,7 @@ export function addPlaylistItems(params, cb) {
         service.playlistItems.insert(
             {
                 auth: client,
-                part: 'snippet',
+                part: ['snippet'],
                 requestBody: {
                     snippet: {
                         playlistId: params.playlistId,
@@ -200,7 +200,7 @@ export function checkItemInPlaylist(params, cb) {
     service.playlistItems.list(
         {
             auth: client,
-            part: 'snippet',
+            part: ['snippet'],
             playlistId: params.playlistId,
             videoId: params.videoId
         },
