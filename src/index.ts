@@ -1,9 +1,9 @@
 import * as async from 'async';
 import {getHotYoutubeLinks, SelectedSubmissions} from './reddit';
-import {initClient, addItemsToPlaylist, ItemToAdd} from './youtube';
+import {initClient, addItemsToPlaylist, ItemToAdd, extractIdsFromURLs} from './youtube';
 
 const playlistId = 'PLlp3zoFuZjAMuAN1o8kBC6M9x4FvHLtyw'; // reggae
-// const playlistId = 'PLlp3zoFuZjAMELGeP4Nwa_-RQW8qAS2dB'; // test
+// const playlistId = 'PLlp3zoFuZjAP5QYlyy66xxtUxpkz7KrLm'; // test
 
 interface AsyncResult {
     initYoutube: void;
@@ -23,16 +23,8 @@ async.auto<AsyncResult>(
             'links',
             (result, cb) => {
                 console.log('Adding items to youtube playlist');
-                const items: ItemToAdd[] = result.links.map((post) => {
-                    const {url} = post;
-                    const parts = url.split('/');
-                    const id = parts[parts.length - 1].replace(/\?.*/, '');
-                    return {
-                        playlistId,
-                        videoId: id
-                    };
-                });
-                addItemsToPlaylist(items, cb);
+                const itemsIDs = extractIdsFromURLs(result.links.map((p) => p.url));
+                addItemsToPlaylist({itemsIDs, playlistId}, cb);
             }
         ]
     },

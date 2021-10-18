@@ -39,7 +39,7 @@ export function getChannel(channelName: string, cb: Callback<youtube_v3.Schema$C
     );
 }
 
-export function getPlaylistItems(playlistId: string, cb: Callback<youtube_v3.Schema$PlaylistItemListResponse>): void {
+function getPlaylistItems(playlistId: string, cb: Callback<youtube_v3.Schema$PlaylistItemListResponse>): void {
     if (!client) {
         return cb(new Error('getPlaylistItems() was called but client is not initialized'));
     }
@@ -59,7 +59,7 @@ export function getPlaylistItems(playlistId: string, cb: Callback<youtube_v3.Sch
     );
 }
 
-export function addPlaylistItem(params: ItemToAdd, cb: Callback<youtube_v3.Schema$PlaylistItem>): void {
+function addPlaylistItem(params: ItemToAdd, cb: Callback<youtube_v3.Schema$PlaylistItem>): void {
     if (!client) {
         return cb(new Error('addPlaylistItems() was called but client is not initialized'));
     }
@@ -113,10 +113,22 @@ function checkItemInPlaylist(params: ItemToAdd, cb: Callback<boolean>): void {
     );
 }
 
-export function addItemsToPlaylist(items: ItemToAdd[], cb: Callback<ItemsInsertionResults>) {
+export function extractIdsFromURLs(urls: string[]): string[] {
+    return urls.map((url) => {
+        const parts = url.split('/');
+        return parts[parts.length - 1].replace(/\?.*/, '');
+    });
+}
+
+export function addItemsToPlaylist(
+    params: {itemsIDs: string[]; playlistId: string},
+    cb: Callback<ItemsInsertionResults>
+) {
     if (!client) {
         return cb(new Error('addItemsToPlaylist() was called but client is not initialized'));
     }
+
+    const {itemsIDs, playlistId} = params;
 
     interface AsyncResult {
         getItemsBefore: youtube_v3.Schema$PlaylistItemListResponse;
@@ -128,16 +140,22 @@ export function addItemsToPlaylist(items: ItemToAdd[], cb: Callback<ItemsInserti
         {
             getItemsBefore: (cb) => {
                 console.log('Get playlist status before insertion');
-                getPlaylistItems(items[0].playlistId, cb);
+                getPlaylistItems(playlistId, cb);
             },
             addItems: [
                 'getItemsBefore',
                 (result, cb) => {
                     console.log('Insert items to playlist');
                     async.mapSeries(
-                        items,
-                        (item, cb) => {
-                            addPlaylistItem(item, cb);
+                        itemsIDs,
+                        (id, cb) => {
+                            addPlaylistItem(
+                                {
+                                    videoId: id,
+                                    playlistId
+                                },
+                                cb
+                            );
                         },
                         cb
                     );
@@ -147,7 +165,7 @@ export function addItemsToPlaylist(items: ItemToAdd[], cb: Callback<ItemsInserti
                 'addItems',
                 (_result, cb) => {
                     console.log('Get playlist status after insertion');
-                    getPlaylistItems(items[0].playlistId, cb);
+                    getPlaylistItems(playlistId, cb);
                 }
             ]
         },
