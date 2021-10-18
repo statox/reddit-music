@@ -1,3 +1,4 @@
+import * as async from 'async';
 import {google} from 'googleapis';
 import {BodyResponseCallback, youtube_v3} from 'googleapis/build/src/apis/youtube';
 import {client} from './youtube-auth';
@@ -108,6 +109,56 @@ function checkItemInPlaylist(params: ItemToAdd, cb: Callback<boolean>): void {
                 return cb(error);
             }
             return cb(null, response.data.items.length > 0);
+        }
+    );
+}
+
+export function addItemsToPlaylist(items: ItemToAdd[], cb: Callback<any>) {
+    if (!client) {
+        return cb(new Error('addItemsToPlaylist() was called but client is not initialized'));
+    }
+
+    interface AsyncResult {
+        getItemsBefore: youtube_v3.Schema$PlaylistItemListResponse;
+        addItems: any;
+        getItemsAfter: youtube_v3.Schema$PlaylistItemListResponse;
+    }
+
+    async.auto<AsyncResult>(
+        {
+            getItemsBefore: (cb) => {
+                console.log('Get playlist status before insertion');
+                getPlaylistItems(items[0].playlistId, cb);
+            },
+            addItems: [
+                'getItemsBefore',
+                (result, cb) => {
+                    console.log('Insert items to playlist');
+                    async.mapSeries(
+                        items,
+                        (item, cb) => {
+                            addPlaylistItem(item, cb);
+                        },
+                        cb
+                    );
+                }
+            ],
+            getItemsAfter: [
+                'addItems',
+                (_result, cb) => {
+                    console.log('Get playlist status after insertion');
+                    getPlaylistItems(items[0].playlistId, cb);
+                }
+            ]
+        },
+        (error, result) => {
+            console.log('After items insertion:');
+            if (error) {
+                console.log(error);
+                return cb(error);
+            }
+            console.log(result);
+            return cb(null, result);
         }
     );
 }

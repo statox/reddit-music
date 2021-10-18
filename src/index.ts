@@ -1,62 +1,38 @@
 import * as async from 'async';
 import {getHotYoutubeLinks, SelectedSubmissions} from './reddit';
-import {initClient, getPlaylistItems, addPlaylistItem} from './youtube';
+import {initClient, addItemsToPlaylist, ItemToAdd} from './youtube';
 
 const playlistId = 'PLlp3zoFuZjAMuAN1o8kBC6M9x4FvHLtyw'; // reggae
-// const playlistId = 'PLlp3zoFuZjAOkEySCnU6UHxSKpZSdhLC_'; // test
+// const playlistId = 'PLlp3zoFuZjAMELGeP4Nwa_-RQW8qAS2dB'; // test
 
 interface AsyncResult {
     initYoutube: void;
-    getItemsBefore: any;
     links: SelectedSubmissions[];
     addItems: any;
-    getItems: any;
 }
 
 async.auto<AsyncResult>(
     {
         initYoutube: (cb) => initClient(cb),
-        getItemsBefore: [
-            'initYoutube',
-            (_result, cb) => {
-                console.log('getItems');
-                getPlaylistItems(playlistId, cb);
-            }
-        ],
         links: (cb) => {
-            console.log('Getting links');
+            console.log('Getting links from reddit');
             getHotYoutubeLinks(cb);
         },
         addItems: [
             'initYoutube',
-            'getItemsBefore',
             'links',
             (result, cb) => {
-                console.log('addItems');
-                async.mapSeries(
-                    result.links,
-                    (post, cb) => {
-                        const {url} = post;
-                        const parts = url.split('/');
-                        const id = parts[parts.length - 1].replace(/\?.*/, '');
-                        addPlaylistItem(
-                            {
-                                playlistId,
-                                videoId: id
-                            },
-                            cb
-                        );
-                    },
-                    cb
-                );
-            }
-        ],
-        getItems: [
-            'initYoutube',
-            'addItems',
-            (_result, cb) => {
-                console.log('getItems');
-                getPlaylistItems(playlistId, cb);
+                console.log('Adding items to youtube playlist');
+                const items: ItemToAdd[] = result.links.map((post) => {
+                    const {url} = post;
+                    const parts = url.split('/');
+                    const id = parts[parts.length - 1].replace(/\?.*/, '');
+                    return {
+                        playlistId,
+                        videoId: id
+                    };
+                });
+                addItemsToPlaylist(items, cb);
             }
         ]
     },
