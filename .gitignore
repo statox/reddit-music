@@ -1,4 +1,4 @@
-src/credentials.json
-src/credentials.youtube.json
+src/config/credentials.json
+src/config/credentials.youtube.json
 .credentials/
 build/

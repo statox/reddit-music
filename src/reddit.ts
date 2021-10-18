@@ -1,5 +1,5 @@
 var snoowrap = require('snoowrap');
-const credentials = require('./credentials.json');
+const credentials = require('./config/credentials.json');
 
 const snoowrapAuth = credentials.reddit;
 const r = new snoowrap(snoowrapAuth);

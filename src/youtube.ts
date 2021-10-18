@@ -15,7 +15,7 @@ var SCOPES = ['https://www.googleapis.com/auth/youtube'];
 var TOKEN_DIR = './.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'youtube-credentials.json';
 
-const credentials = require('./credentials.youtube.json');
+const credentials = require('./config/credentials.youtube.json');
 let client;
 
 export function initClient(cb) {

@@ -8,7 +8,7 @@
     "build:clean": "mkdir -p build && rm -rf build/*",
     "build:static": "for f in $(find src -type f -not -name \"*.ts\" -not -name \"*.js\"); do mkdir -p `dirname $f | sed 's/src/build/'` && cp -f $f `echo $f | sed 's/src/build/'`; done;",
     "build:ts": "node ./node_modules/.bin/tsc",
-    "copy-config": "cp credentials.sample.json credentials.json; cp credentials.youtube.sample.json credentials.youtube.json",
+    "copy-config": "for f in $(find src/config -type f -name \"*.sample*\"); do cp $f `echo $f | sed 's/\\.sample//'`; done;",
     "start": "node build/index.js"
   },
   "author": "me@statox.fr",
