@@ -6,7 +6,9 @@
 
 var fs = require('fs');
 var readline = require('readline');
-import {google} from 'googleapis';
+import {Credentials, OAuth2Client} from 'google-auth-library';
+import {google, Auth} from 'googleapis';
+import {BodyResponseCallback, youtube_v3} from 'googleapis/build/src/apis/youtube';
 var OAuth2 = google.auth.OAuth2;
 
 // If modifying these scopes, delete your previously saved credentials
@@ -59,7 +61,7 @@ function authorize(credentials, callback) {
  * @param {getEventsCallback} callback The callback to call with the authorized
  *     client.
  */
-function getNewToken(oauth2Client, callback) {
+function getNewToken(oauth2Client: OAuth2Client, callback) {
     var authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: SCOPES
@@ -85,10 +87,8 @@ function getNewToken(oauth2Client, callback) {
 
 /**
  * Store token to disk be used in later program executions.
- *
- * @param {Object} token The token to store to disk.
  */
-function storeToken(token) {
+function storeToken(token: Credentials): void {
     try {
         fs.mkdirSync(TOKEN_DIR);
     } catch (err) {
@@ -104,10 +104,8 @@ function storeToken(token) {
 
 /**
  * Lists the names and IDs of up to 10 files.
- *
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-export function getChannel(channelName, cb) {
+export function getChannel(channelName: string, cb: BodyResponseCallback<youtube_v3.Schema$ChannelListResponse>): void {
     if (!client) {
         return cb(new Error('getChannel() was called but client is not initialized'));
     }
@@ -139,7 +137,10 @@ export function getChannel(channelName, cb) {
     );
 }
 
-export function getPlaylistItems(playlistId, cb) {
+export function getPlaylistItems(
+    playlistId: string,
+    cb: BodyResponseCallback<youtube_v3.Schema$PlaylistItemListResponse>
+): void {
     if (!client) {
         return cb(new Error('getPlaylistItems() was called but client is not initialized'));
     }
@@ -159,13 +160,13 @@ export function getPlaylistItems(playlistId, cb) {
     );
 }
 
-export function addPlaylistItems(params, cb) {
+export function addPlaylistItem(params: ItemToAdd, cb: BodyResponseCallback<youtube_v3.Schema$PlaylistItem>): void {
     if (!client) {
         return cb(new Error('addPlaylistItems() was called but client is not initialized'));
     }
     checkItemInPlaylist(params, (error, itemIsInPlaylist) => {
         if (itemIsInPlaylist) {
-            return cb();
+            return cb(null);
         }
         var service = google.youtube('v3');
         service.playlistItems.insert(
@@ -176,7 +177,7 @@ export function addPlaylistItems(params, cb) {
                     snippet: {
                         playlistId: params.playlistId,
                         resourceId: {
-                            kind: params.kind,
+                            kind: 'youtube#video',
                             videoId: params.videoId
                         }
                     }
@@ -192,7 +193,7 @@ export function addPlaylistItems(params, cb) {
     });
 }
 
-export function checkItemInPlaylist(params, cb) {
+export function checkItemInPlaylist(params: ItemToAdd, cb: Callback<boolean>): void {
     if (!client) {
         return cb(new Error('checkItemInPlaylist() was called but client is not initialized'));
     }
@@ -212,3 +213,8 @@ export function checkItemInPlaylist(params, cb) {
         }
     );
 }
+
+export type ItemToAdd = {
+    playlistId: string;
+    videoId: string;
+};

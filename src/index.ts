@@ -1,6 +1,6 @@
 import * as async from 'async';
 import {getHotYoutubeLinks, SelectedSubmissions} from './reddit';
-import {getChannel, initClient, getPlaylistItems, addPlaylistItems, checkItemInPlaylist} from './youtube.js';
+import {getChannel, initClient, getPlaylistItems, addPlaylistItem, checkItemInPlaylist} from './youtube.js';
 
 const playlistId = 'PLlp3zoFuZjAMuAN1o8kBC6M9x4FvHLtyw'; // reggae
 // const playlistId = 'PLlp3zoFuZjAOkEySCnU6UHxSKpZSdhLC_'; // test
@@ -39,10 +39,9 @@ async.auto<AsyncResult>(
                         const {url} = post;
                         const parts = url.split('/');
                         const id = parts[parts.length - 1].replace(/\?.*/, '');
-                        addPlaylistItems(
+                        addPlaylistItem(
                             {
                                 playlistId,
-                                kind: 'youtube#video',
                                 videoId: id
                             },
                             cb
