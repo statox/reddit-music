@@ -1,6 +1,6 @@
 import * as async from 'async';
 import {getHotYoutubeLinks, SelectedSubmissions} from './reddit';
-import {getChannel, initClient, getPlaylistItems, addPlaylistItem, checkItemInPlaylist} from './youtube.js';
+import {initClient, getPlaylistItems, addPlaylistItem} from './youtube';
 
 const playlistId = 'PLlp3zoFuZjAMuAN1o8kBC6M9x4FvHLtyw'; // reggae
 // const playlistId = 'PLlp3zoFuZjAOkEySCnU6UHxSKpZSdhLC_'; // test
