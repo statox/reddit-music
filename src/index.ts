@@ -1,11 +1,19 @@
 import * as async from 'async';
-import {getHotYoutubeLinks} from './reddit.js';
+import {getHotYoutubeLinks, SelectedSubmissions} from './reddit';
 import {getChannel, initClient, getPlaylistItems, addPlaylistItems, checkItemInPlaylist} from './youtube.js';
 
 const playlistId = 'PLlp3zoFuZjAMuAN1o8kBC6M9x4FvHLtyw'; // reggae
 // const playlistId = 'PLlp3zoFuZjAOkEySCnU6UHxSKpZSdhLC_'; // test
 
-async.auto(
+interface AsyncResult {
+    initYoutube: void;
+    getItemsBefore: any;
+    links: SelectedSubmissions[];
+    addItems: any;
+    getItems: any;
+}
+
+async.auto<AsyncResult>(
     {
         initYoutube: (cb) => initClient(cb),
         getItemsBefore: [
