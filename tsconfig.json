@@ -1,16 +1,19 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "jsx": "preserve",
+    "target": "ES2019",
+    "jsx": "react",
     "esModuleInterop": true,
     "sourceMap": true,
     "allowJs": true,
-    "lib": [
-      "es2018",
-      "dom"
-    ],
+    "lib": [ "es2018", "dom" ],
     "rootDir": "src",
+    "outDir": "build",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "build"
-  }
+    "noImplicitReturns": true,
+    "removeComments": false,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "exclude": ["node_modules", "build"]
 }
