@@ -4,7 +4,7 @@
 // After configuring OAuth2 on the account this script stores
 // the token in ./.credentials
 
-const fs = require('fs');
+import * as fs from 'fs';
 const readline = require('readline');
 import {Credentials, OAuth2Client} from 'google-auth-library';
 import {google, Auth} from 'googleapis';
@@ -17,15 +17,15 @@ var TOKEN_DIR = './.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'youtube-credentials.json';
 
 const credentials = require('../config/credentials.youtube.json');
-export var client;
+export var client: OAuth2Client;
 
 /**
  * Initialize the client which will be used by the youtube-services
  * (Do the Oauth calls and stuff)
  */
-export function initClient(cb) {
+export function initClient(cb: CallbackErrorOnly) {
     console.log('start initClient');
-    authorize(credentials, (newClient) => {
+    authorize(credentials, (error, newClient) => {
         client = newClient;
         console.log('client ready');
         return cb();
@@ -39,19 +39,19 @@ export function initClient(cb) {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+function authorize(credentials: any, callback: Callback<OAuth2Client>) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
     var oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
 
     // Check if we have previously stored a token.
-    fs.readFile(TOKEN_PATH, function (err, token) {
+    fs.readFile(TOKEN_PATH, 'utf-8', (err, token) => {
         if (err) {
             getNewToken(oauth2Client, callback);
         } else {
             oauth2Client.credentials = JSON.parse(token);
-            callback(oauth2Client);
+            callback(null, oauth2Client);
         }
     });
 }
@@ -64,7 +64,7 @@ function authorize(credentials, callback) {
  * @param {getEventsCallback} callback The callback to call with the authorized
  *     client.
  */
-function getNewToken(oauth2Client: OAuth2Client, callback) {
+function getNewToken(oauth2Client: OAuth2Client, callback: Callback<OAuth2Client>) {
     var authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: SCOPES
@@ -74,7 +74,7 @@ function getNewToken(oauth2Client: OAuth2Client, callback) {
         input: process.stdin,
         output: process.stdout
     });
-    rl.question('Enter the code from that page here: ', function (code) {
+    rl.question('Enter the code from that page here: ', function (code: string) {
         rl.close();
         oauth2Client.getToken(code, function (err, token) {
             if (err) {
@@ -83,7 +83,7 @@ function getNewToken(oauth2Client: OAuth2Client, callback) {
             }
             oauth2Client.credentials = token;
             storeToken(token);
-            callback(oauth2Client);
+            callback(null, oauth2Client);
         });
     });
 }

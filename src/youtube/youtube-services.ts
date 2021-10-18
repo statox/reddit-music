@@ -6,7 +6,7 @@ import {ItemToAdd} from './youtube-types';
 /**
  * Lists the names and IDs of up to 10 files.
  */
-export function getChannel(channelName: string, cb: BodyResponseCallback<youtube_v3.Schema$ChannelListResponse>): void {
+export function getChannel(channelName: string, cb: Callback<youtube_v3.Schema$Channel[]>): void {
     if (!client) {
         return cb(new Error('getChannel() was called but client is not initialized'));
     }
@@ -38,10 +38,7 @@ export function getChannel(channelName: string, cb: BodyResponseCallback<youtube
     );
 }
 
-export function getPlaylistItems(
-    playlistId: string,
-    cb: BodyResponseCallback<youtube_v3.Schema$PlaylistItemListResponse>
-): void {
+export function getPlaylistItems(playlistId: string, cb: Callback<youtube_v3.Schema$PlaylistItemListResponse>): void {
     if (!client) {
         return cb(new Error('getPlaylistItems() was called but client is not initialized'));
     }
@@ -61,7 +58,7 @@ export function getPlaylistItems(
     );
 }
 
-export function addPlaylistItem(params: ItemToAdd, cb: BodyResponseCallback<youtube_v3.Schema$PlaylistItem>): void {
+export function addPlaylistItem(params: ItemToAdd, cb: Callback<youtube_v3.Schema$PlaylistItem>): void {
     if (!client) {
         return cb(new Error('addPlaylistItems() was called but client is not initialized'));
     }
@@ -88,7 +85,7 @@ export function addPlaylistItem(params: ItemToAdd, cb: BodyResponseCallback<yout
                 if (error) {
                     return cb(error);
                 }
-                return cb(null, response);
+                return cb(null, response.data);
             }
         );
     });

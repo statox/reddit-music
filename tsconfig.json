@@ -11,6 +11,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitReturns": true,
+    "noImplicitAny": true,
     "removeComments": false,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
