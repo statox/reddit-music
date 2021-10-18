@@ -37,12 +37,11 @@ async.auto<AsyncResult>(
         ]
     },
     (error, result) => {
-        console.log('In final callback');
         if (error) {
             console.log(error);
-            process.exit();
+            process.exit(1);
         }
-        console.log(result);
-        process.exit();
+        console.log('Number of videos inserted in the playlist', result.addItems.nbInsertedItems);
+        process.exit(0);
     }
 );

@@ -2,7 +2,7 @@ import * as async from 'async';
 import {google} from 'googleapis';
 import {BodyResponseCallback, youtube_v3} from 'googleapis/build/src/apis/youtube';
 import {client} from './youtube-auth';
-import {ItemToAdd} from './youtube-types';
+import {ItemsInsertionResults, ItemToAdd} from './youtube-types';
 
 /**
  * Lists the names and IDs of up to 10 files.
@@ -113,7 +113,7 @@ function checkItemInPlaylist(params: ItemToAdd, cb: Callback<boolean>): void {
     );
 }
 
-export function addItemsToPlaylist(items: ItemToAdd[], cb: Callback<any>) {
+export function addItemsToPlaylist(items: ItemToAdd[], cb: Callback<ItemsInsertionResults>) {
     if (!client) {
         return cb(new Error('addItemsToPlaylist() was called but client is not initialized'));
     }
@@ -152,13 +152,14 @@ export function addItemsToPlaylist(items: ItemToAdd[], cb: Callback<any>) {
             ]
         },
         (error, result) => {
-            console.log('After items insertion:');
             if (error) {
-                console.log(error);
                 return cb(error);
             }
-            console.log(result);
-            return cb(null, result);
+            const itemsBeforeInsertion = result.getItemsBefore.pageInfo.totalResults;
+            const itemsAfterInsertion = result.getItemsAfter.pageInfo.totalResults;
+            const nbInsertedItems = itemsAfterInsertion - itemsBeforeInsertion;
+
+            return cb(null, {nbInsertedItems});
         }
     );
 }
